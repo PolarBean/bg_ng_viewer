@@ -27,6 +27,40 @@ def structures():
     ]
 
 
+def hierarchy(counts):
+    """Structures with `counts[depth]` regions at each depth of the hierarchy."""
+    rows, value = [], 0
+    for depth, count in enumerate(counts):
+        for _ in range(count):
+            value += 1
+            rows.append(
+                {
+                    "annotation_value": str(value),
+                    "color_hex_triplet": "#000000",
+                    "root_identifier_path": json.dumps(list(range(depth + 1))),
+                }
+            )
+    return rows
+
+
+def test_default_segments_fills_the_hierarchy_top_down():
+    rows = hierarchy([1, 10, 50, 200])
+    chosen = viewer.default_segments(rows, limit=40)
+
+    depths = {int(row["annotation_value"]): viewer.structure_depth(row) for row in rows}
+    by_depth = [
+        sum(1 for value in chosen if depths[value] == depth) for depth in range(4)
+    ]
+    assert len(chosen) == 40
+    assert by_depth == [1, 10, 29, 0]
+    assert viewer.default_segments(rows, limit=40) == chosen
+
+
+def test_default_segments_keeps_everything_in_a_small_atlas():
+    rows = hierarchy([1, 3, 5])
+    assert len(viewer.default_segments(rows, limit=40)) == 9
+
+
 def test_atlas_builds_component_paths_from_manifest():
     atlas = viewer.Atlas(manifest())
 
@@ -48,21 +82,41 @@ def test_build_state_preserves_layers_colours_and_meshes():
     }
     state = viewer.build_state(manifest(), structures(), sources, (2.0, 42.0))
 
-    template, annotation, hemisphere = state["layers"]
+    template, annotation, meshes, hemisphere = state["layers"]
     assert template["shaderControls"]["normalized"]["range"] == [2.0, 42.0]
     assert template["volumeRendering"] == "off"
-    assert annotation["segments"] == ["!1", "!2", "!3"]
+    # Every region is painted in the cross sections, without a mesh subsource.
+    assert annotation["segments"] == ["1", "2", "3"]
     assert annotation["segmentColors"]["2"] == "#abcdef"
     assert annotation["source"][1]["url"] == "precomputed://meshes"
-    assert annotation["source"][1]["subsources"] == {
-        "properties": True,
-        "mesh": True,
-    }
+    assert annotation["source"][1]["subsources"] == {"properties": True}
+    # Meshes live in their own, volume-less layer, so they only show in 3D.
+    assert meshes["name"] == "region meshes"
+    assert meshes["segments"] == ["1", "2", "3"]
+    assert meshes["source"]["subsources"] == {"properties": True, "mesh": True}
     assert hemisphere["visible"] is False
     assert [state["dimensions"][axis][0] for axis in "xyz"] == pytest.approx(
         [10e-6, 20e-6, 25e-6]
     )
     assert state["position"] == [15.0, 10.0, 5.0]
+
+
+def test_build_state_shows_all_regions_in_2d_and_40_meshes_in_3d():
+    sources = {
+        "template": "template/|zarr3:",
+        "annotation": "annotation/|zarr3:",
+        "hemisphere": "hemisphere/|zarr3:",
+        "precomputed": "precomputed://meshes",
+    }
+    rows = hierarchy([1, 10, 50, 200])
+    _, annotation, meshes, _ = viewer.build_state(
+        manifest(), rows, sources, (2.0, 42.0)
+    )["layers"]
+
+    assert not any(segment.startswith("!") for segment in annotation["segments"])
+    assert len(annotation["segments"]) == len(rows)
+    assert sum(not s.startswith("!") for s in meshes["segments"]) == 40
+    assert len(meshes["segments"]) == len(rows)
 
 
 def test_build_state_adds_additional_references_as_hidden_layers():

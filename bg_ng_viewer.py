@@ -8,6 +8,7 @@ import configparser
 import csv
 import gzip
 import json
+import random
 import re
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
@@ -30,6 +31,9 @@ MANIFEST = "manifest.json"
 
 # Assumed cross-section panel size in pixels, used to fit the atlas in the 2D views.
 PANEL_PIXELS = 600
+
+# How many region meshes are shown when the state is first opened.
+DEFAULT_MESHES = 40
 
 # BrainGlobe orientation letters name where an axis starts, so increasing indexes
 # travel towards the opposite pole.
@@ -335,6 +339,42 @@ def top_down_orientation(orientation: str) -> list[float] | None:
     return matrix_quaternion(right, down, forward)
 
 
+def structure_depth(row: dict[str, str]) -> int:
+    """Depth of a structure in the hierarchy, with the root at 0."""
+    path = (row.get("root_identifier_path") or "").strip()
+    if not path:
+        return 0
+    return max(len(json.loads(path)) - 1, 0)
+
+
+def default_segments(
+    structures: list[dict[str, str]], limit: int = DEFAULT_MESHES
+) -> set[int]:
+    """Pick up to `limit` segments to show, filling the hierarchy top down.
+
+    Whole levels are taken while they fit; the level that would overflow
+    contributes a random sample of the remaining budget, and deeper levels are
+    left out. The sample is seeded so regenerating a state is reproducible.
+    """
+    levels: dict[int, list[int]] = {}
+    for row in structures:
+        levels.setdefault(structure_depth(row), []).append(int(row["annotation_value"]))
+
+    chosen: set[int] = set()
+    generator = random.Random(0)
+    for depth in sorted(levels):
+        ids = sorted(levels[depth])
+        remaining = limit - len(chosen)
+        if remaining <= 0:
+            break
+        if len(ids) <= remaining:
+            chosen.update(ids)
+        else:
+            chosen.update(generator.sample(ids, remaining))
+            break
+    return chosen
+
+
 def build_state(
     manifest: dict,
     structures: list[dict[str, str]],
@@ -342,23 +382,45 @@ def build_state(
     image_range: tuple[float, float],
     references: Sequence[tuple[str, str, tuple[float, float]]] = (),
 ) -> dict:
-    # "!" lists a segment without showing it, so the link opens without fetching a
-    # mesh for every region. Ticking a region in the segments tab loads it.
-    ids = [f"!{int(row['annotation_value'])}" for row in structures]
+    values = [int(row["annotation_value"]) for row in structures]
     colors = {
         str(int(row["annotation_value"])): row["color_hex_triplet"]
         for row in structures
     }
+    # The annotation layer carries the volume only, so every region is painted in
+    # the cross sections without any mesh being fetched for it.
     annotation_source: str | list = sources["annotation"]
+    mesh_layers = []
     if "precomputed" in sources:
         annotation_source = [
             annotation_source,
             {
                 "url": sources["precomputed"],
                 "enableDefaultSubsources": False,
-                "subsources": {"properties": True, "mesh": True},
+                "subsources": {"properties": True},
             },
         ]
+        # A second layer holds the meshes alone - it has no volume, so it only
+        # shows in 3D. "!" lists a segment without showing it, keeping the region
+        # one tick away in the segments tab.
+        meshed = default_segments(structures)
+        mesh_layers.append(
+            {
+                "type": "segmentation",
+                "source": {
+                    "url": sources["precomputed"],
+                    "enableDefaultSubsources": False,
+                    "subsources": {"properties": True, "mesh": True},
+                },
+                "segments": [
+                    str(value) if value in meshed else f"!{value}" for value in values
+                ],
+                "segmentColors": colors,
+                "objectAlpha": 0.55,
+                "tab": "segments",
+                "name": "region meshes",
+            }
+        )
 
     shape = list(reversed(manifest["shape"]))
     resolution = list(reversed(manifest["resolution"]))
@@ -396,12 +458,13 @@ def build_state(
             {
                 "type": "segmentation",
                 "source": annotation_source,
-                "segments": ids,
+                "segments": [str(value) for value in values],
                 "segmentColors": colors,
                 "objectAlpha": 0.55,
                 "tab": "segments",
                 "name": "annotation",
             },
+            *mesh_layers,
             {
                 "type": "segmentation",
                 "source": sources["hemisphere"],
