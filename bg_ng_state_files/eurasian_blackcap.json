@@ -1,0 +1,170 @@
+{
+  "dimensions": {
+    "x": [
+      2.4999999999999998e-05,
+      "m"
+    ],
+    "y": [
+      2.4999999999999998e-05,
+      "m"
+    ],
+    "z": [
+      2.4999999999999998e-05,
+      "m"
+    ]
+  },
+  "position": [
+    256.0,
+    183.0,
+    204.0
+  ],
+  "crossSectionScale": 1,
+  "projectionScale": 640.0,
+  "layers": [
+    {
+      "type": "image",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/templates/eurasian_blackcap-template/3_0/template.ome.zarr/|zarr3:",
+      "shaderControls": {
+        "normalized": {
+          "range": [
+            0.0,
+            55691.0
+          ]
+        }
+      },
+      "name": "template"
+    },
+    {
+      "type": "segmentation",
+      "source": [
+        "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/eurasian_blackcap-annotation/3_0/annotations_compressed.ome.zarr/|zarr3:",
+        {
+          "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/eurasian_blackcap-annotation/3_0/annotations.precomputed",
+          "enableDefaultSubsources": false,
+          "subsources": {
+            "properties": true,
+            "mesh": true
+          }
+        }
+      ],
+      "segments": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "10",
+        "17",
+        "18",
+        "19",
+        "20",
+        "30",
+        "40",
+        "50",
+        "60",
+        "70",
+        "80",
+        "90",
+        "110",
+        "140",
+        "220",
+        "305",
+        "402",
+        "505",
+        "511",
+        "512",
+        "513",
+        "514",
+        "516",
+        "517",
+        "518",
+        "519",
+        "520",
+        "526",
+        "527",
+        "546",
+        "566",
+        "596",
+        "597",
+        "908",
+        "916",
+        "1019",
+        "1020",
+        "1",
+        "999",
+        "61"
+      ],
+      "segmentColors": {
+        "2": "#00FF00",
+        "3": "#0000FF",
+        "4": "#FFFF00",
+        "5": "#00FFFF",
+        "6": "#FF00FF",
+        "7": "#FBFF00",
+        "10": "#FF9100",
+        "17": "#FF00FF",
+        "18": "#FF4000",
+        "19": "#2200FF",
+        "20": "#0078BD",
+        "30": "#B06C6C",
+        "40": "#EE82EE",
+        "50": "#FCF569",
+        "60": "#F4A460",
+        "70": "#FF0000",
+        "80": "#87CEEB",
+        "90": "#02BBF3",
+        "110": "#C71585",
+        "140": "#D2B48C",
+        "220": "#FF7F00",
+        "305": "#FF0000",
+        "402": "#DD4031",
+        "505": "#00FA9A",
+        "511": "#76CF11",
+        "512": "#F89C06",
+        "513": "#0000CD",
+        "514": "#00BD94",
+        "516": "#FD001D",
+        "517": "#000080",
+        "518": "#07FFFF",
+        "519": "#2E8B57",
+        "520": "#EF1D06",
+        "526": "#FF0037",
+        "527": "#8789EA",
+        "546": "#BD1058",
+        "566": "#EF0A28",
+        "596": "#F4170F",
+        "597": "#1DFF00",
+        "908": "#06EFEF",
+        "916": "#408699",
+        "1019": "#ADFD00",
+        "1020": "#FF001D",
+        "1": "#00C864",
+        "999": "#FFFFFF",
+        "61": "#FF0004"
+      },
+      "objectAlpha": 0.55,
+      "name": "annotation"
+    },
+    {
+      "type": "segmentation",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/eurasian_blackcap-annotation/3_0/hemispheres.ome.zarr/|zarr3:",
+      "segments": [
+        "1",
+        "2"
+      ],
+      "segmentColors": {
+        "1": "#4c78a8",
+        "2": "#f58518"
+      },
+      "visible": false,
+      "name": "hemisphere mask"
+    }
+  ],
+  "showSlices": false,
+  "selectedLayer": {
+    "visible": true,
+    "layer": "annotation"
+  },
+  "layout": "4panel-alt"
+}

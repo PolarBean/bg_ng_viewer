@@ -1,0 +1,158 @@
+{
+  "dimensions": {
+    "x": [
+      3.9999999999999996e-05,
+      "m"
+    ],
+    "y": [
+      3.9999999999999996e-05,
+      "m"
+    ],
+    "z": [
+      3.9999999999999996e-05,
+      "m"
+    ]
+  },
+  "position": [
+    86.0,
+    77.0,
+    128.0
+  ],
+  "crossSectionScale": 1,
+  "projectionScale": 320.0,
+  "layers": [
+    {
+      "type": "image",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/templates/unam_axolotl-template/3_0/template.ome.zarr/|zarr3:",
+      "shaderControls": {
+        "normalized": {
+          "range": [
+            0.0,
+            65535.0
+          ]
+        }
+      },
+      "name": "template"
+    },
+    {
+      "type": "segmentation",
+      "source": [
+        "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/unam_axolotl-annotation/3_0/annotations_compressed.ome.zarr/|zarr3:",
+        {
+          "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/unam_axolotl-annotation/3_0/annotations.precomputed",
+          "enableDefaultSubsources": false,
+          "subsources": {
+            "properties": true,
+            "mesh": true
+          }
+        }
+      ],
+      "segments": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "33",
+        "34",
+        "35",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "101",
+        "102",
+        "103",
+        "104",
+        "105",
+        "106",
+        "999"
+      ],
+      "segmentColors": {
+        "1": "#FF0000",
+        "2": "#FF0000",
+        "3": "#FF0000",
+        "4": "#FF0000",
+        "5": "#FF0000",
+        "13": "#FF0000",
+        "14": "#FF0000",
+        "15": "#FF0000",
+        "16": "#FF0000",
+        "17": "#FF0000",
+        "18": "#FF0000",
+        "19": "#FF0000",
+        "20": "#FF0000",
+        "21": "#FF0000",
+        "24": "#FF0000",
+        "25": "#FF0000",
+        "26": "#FF0000",
+        "27": "#FF0000",
+        "28": "#FF0000",
+        "29": "#FF0000",
+        "30": "#FF0000",
+        "33": "#FF0000",
+        "34": "#FF0000",
+        "35": "#FF0000",
+        "38": "#FF0000",
+        "39": "#FF0000",
+        "40": "#FF0000",
+        "41": "#FF0000",
+        "42": "#FF0000",
+        "43": "#FF0000",
+        "44": "#FF0000",
+        "45": "#FF0000",
+        "46": "#FF0000",
+        "101": "#7D007D",
+        "102": "#7D007D",
+        "103": "#7D007D",
+        "104": "#7D007D",
+        "105": "#7D007D",
+        "106": "#7D007D",
+        "999": "#FFFFFF"
+      },
+      "objectAlpha": 0.55,
+      "name": "annotation"
+    },
+    {
+      "type": "segmentation",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/unam_axolotl-annotation/3_0/hemispheres.ome.zarr/|zarr3:",
+      "segments": [
+        "1",
+        "2"
+      ],
+      "segmentColors": {
+        "1": "#4c78a8",
+        "2": "#f58518"
+      },
+      "visible": false,
+      "name": "hemisphere mask"
+    }
+  ],
+  "showSlices": false,
+  "selectedLayer": {
+    "visible": true,
+    "layer": "annotation"
+  },
+  "layout": "4panel-alt"
+}
