@@ -1,0 +1,123 @@
+{
+  "dimensions": {
+    "x": [
+      2e-06,
+      "m"
+    ],
+    "y": [
+      2e-06,
+      "m"
+    ],
+    "z": [
+      2e-06,
+      "m"
+    ]
+  },
+  "position": [
+    73.0,
+    160.0,
+    160.0
+  ],
+  "crossSectionScale": 0.5333333333333333,
+  "projectionOrientation": [
+    0.0,
+    0.7071067811865476,
+    0.7071067811865475,
+    0.0
+  ],
+  "projectionScale": 400.0,
+  "layers": [
+    {
+      "type": "image",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/templates/drosophila_wingdisc_instar3-template/3_0/template.ome.zarr/|zarr3:",
+      "shaderControls": {
+        "normalized": {
+          "range": [
+            0.0,
+            65535.0
+          ]
+        }
+      },
+      "volumeRendering": "off",
+      "name": "template"
+    },
+    {
+      "type": "segmentation",
+      "source": [
+        "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/drosophila_wingdisc_instar3-annotation/3_0/annotations_compressed.ome.zarr/|zarr3:",
+        {
+          "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/drosophila_wingdisc_instar3-annotation/3_0/annotations.precomputed",
+          "enableDefaultSubsources": false,
+          "subsources": {
+            "properties": true
+          }
+        }
+      ],
+      "segments": [
+        "997",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "segmentColors": {
+        "997": "#FFFFFF",
+        "1": "#FF0000",
+        "2": "#00FF00",
+        "3": "#0000FF",
+        "4": "#FFFF00"
+      },
+      "objectAlpha": 0.55,
+      "tab": "segments",
+      "name": "annotation"
+    },
+    {
+      "type": "segmentation",
+      "source": {
+        "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/drosophila_wingdisc_instar3-annotation/3_0/annotations.precomputed",
+        "enableDefaultSubsources": false,
+        "subsources": {
+          "properties": true,
+          "mesh": true
+        }
+      },
+      "segments": [
+        "997",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "segmentColors": {
+        "997": "#FFFFFF",
+        "1": "#FF0000",
+        "2": "#00FF00",
+        "3": "#0000FF",
+        "4": "#FFFF00"
+      },
+      "objectAlpha": 0.55,
+      "tab": "segments",
+      "name": "region meshes"
+    },
+    {
+      "type": "segmentation",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/drosophila_wingdisc_instar3-annotation/3_0/hemispheres.ome.zarr/|zarr3:",
+      "segments": [
+        "1",
+        "2"
+      ],
+      "segmentColors": {
+        "1": "#4c78a8",
+        "2": "#f58518"
+      },
+      "visible": false,
+      "name": "hemisphere mask"
+    }
+  ],
+  "showSlices": false,
+  "selectedLayer": {
+    "visible": true,
+    "layer": "annotation"
+  },
+  "layout": "4panel-alt"
+}

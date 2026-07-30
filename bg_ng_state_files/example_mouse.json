@@ -1,0 +1,135 @@
+{
+  "dimensions": {
+    "x": [
+      9.999999999999999e-05,
+      "m"
+    ],
+    "y": [
+      9.999999999999999e-05,
+      "m"
+    ],
+    "z": [
+      9.999999999999999e-05,
+      "m"
+    ]
+  },
+  "position": [
+    57.0,
+    40.0,
+    66.0
+  ],
+  "crossSectionScale": 0.22,
+  "projectionOrientation": [
+    0.0,
+    0.7071067811865476,
+    0.7071067811865475,
+    0.0
+  ],
+  "projectionScale": 165.0,
+  "layers": [
+    {
+      "type": "image",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/templates/allen-adult-mouse-stpt-template/2015/template.ome.zarr/|zarr3:",
+      "shaderControls": {
+        "normalized": {
+          "range": [
+            0.0,
+            516.0
+          ]
+        }
+      },
+      "volumeRendering": "off",
+      "name": "template"
+    },
+    {
+      "type": "segmentation",
+      "source": [
+        "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/example_mouse-annotation/3_0/annotations_compressed.ome.zarr/|zarr3:",
+        {
+          "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/example_mouse-annotation/3_0/annotations.precomputed",
+          "enableDefaultSubsources": false,
+          "subsources": {
+            "properties": true
+          }
+        }
+      ],
+      "segments": [
+        "997",
+        "8",
+        "567",
+        "688",
+        "695",
+        "315",
+        "184",
+        "68"
+      ],
+      "segmentColors": {
+        "997": "#FFFFFF",
+        "8": "#BFDAE3",
+        "567": "#B0F0FF",
+        "688": "#B0FFB8",
+        "695": "#70FF70",
+        "315": "#70FF71",
+        "184": "#268F45",
+        "68": "#268F45"
+      },
+      "objectAlpha": 0.55,
+      "tab": "segments",
+      "name": "annotation"
+    },
+    {
+      "type": "segmentation",
+      "source": {
+        "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/example_mouse-annotation/3_0/annotations.precomputed",
+        "enableDefaultSubsources": false,
+        "subsources": {
+          "properties": true,
+          "mesh": true
+        }
+      },
+      "segments": [
+        "997",
+        "8",
+        "567",
+        "688",
+        "695",
+        "315",
+        "184",
+        "68"
+      ],
+      "segmentColors": {
+        "997": "#FFFFFF",
+        "8": "#BFDAE3",
+        "567": "#B0F0FF",
+        "688": "#B0FFB8",
+        "695": "#70FF70",
+        "315": "#70FF71",
+        "184": "#268F45",
+        "68": "#268F45"
+      },
+      "objectAlpha": 0.55,
+      "tab": "segments",
+      "name": "region meshes"
+    },
+    {
+      "type": "segmentation",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/example_mouse-annotation/3_0/hemispheres.ome.zarr/|zarr3:",
+      "segments": [
+        "1",
+        "2"
+      ],
+      "segmentColors": {
+        "1": "#4c78a8",
+        "2": "#f58518"
+      },
+      "visible": false,
+      "name": "hemisphere mask"
+    }
+  ],
+  "showSlices": false,
+  "selectedLayer": {
+    "visible": true,
+    "layer": "annotation"
+  },
+  "layout": "4panel-alt"
+}
