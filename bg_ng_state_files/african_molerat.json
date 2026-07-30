@@ -18,7 +18,13 @@
     187.5,
     338.5
   ],
-  "crossSectionScale": 1,
+  "crossSectionScale": 1.1283333333333334,
+  "projectionOrientation": [
+    0.0,
+    0.7071067811865476,
+    0.7071067811865475,
+    0.0
+  ],
   "projectionScale": 846.25,
   "layers": [
     {
@@ -32,6 +38,7 @@
           ]
         }
       },
+      "volumeRendering": "off",
       "name": "template"
     },
     {
@@ -42,8 +49,7 @@
           "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/african_molerat-annotation/3_0/annotations.precomputed",
           "enableDefaultSubsources": false,
           "subsources": {
-            "properties": true,
-            "mesh": true
+            "properties": true
           }
         }
       ],
@@ -120,7 +126,94 @@
         "999": "#FFFFFF"
       },
       "objectAlpha": 0.55,
+      "tab": "segments",
       "name": "annotation"
+    },
+    {
+      "type": "segmentation",
+      "source": {
+        "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/african_molerat-annotation/3_0/annotations.precomputed",
+        "enableDefaultSubsources": false,
+        "subsources": {
+          "properties": true,
+          "mesh": true
+        }
+      },
+      "segments": [
+        "5",
+        "17",
+        "28",
+        "36",
+        "39",
+        "43",
+        "50",
+        "59",
+        "60",
+        "68",
+        "76",
+        "77",
+        "86",
+        "90",
+        "99",
+        "104",
+        "110",
+        "122",
+        "128",
+        "131",
+        "139",
+        "140",
+        "145",
+        "159",
+        "168",
+        "177",
+        "185",
+        "195",
+        "200",
+        "213",
+        "221",
+        "231",
+        "250",
+        "999"
+      ],
+      "segmentColors": {
+        "5": "#002040",
+        "17": "#008040",
+        "28": "#00E000",
+        "36": "#202000",
+        "39": "#2020C0",
+        "43": "#2040C0",
+        "50": "#208080",
+        "59": "#20C0C0",
+        "60": "#20E000",
+        "68": "#402000",
+        "76": "#406000",
+        "77": "#406040",
+        "86": "#40A080",
+        "90": "#40C080",
+        "99": "#6000C0",
+        "104": "#604000",
+        "110": "#606080",
+        "122": "#60C080",
+        "128": "#800000",
+        "131": "#8000C0",
+        "139": "#8040C0",
+        "140": "#806000",
+        "145": "#808040",
+        "159": "#80E0C0",
+        "168": "#A04000",
+        "177": "#A08040",
+        "185": "#A0C040",
+        "195": "#C000C0",
+        "200": "#C04000",
+        "213": "#C0A040",
+        "221": "#C0E040",
+        "231": "#E020C0",
+        "250": "#E0C080",
+        "999": "#FFFFFF"
+      },
+      "objectAlpha": 0.55,
+      "tab": "segments",
+      "name": "region meshes"
     },
     {
       "type": "segmentation",

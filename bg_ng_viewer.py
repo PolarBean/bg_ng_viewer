@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from functools import cache, partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from typing import Sequence
 from urllib.error import HTTPError
 from urllib.request import urlopen
 
@@ -26,6 +27,28 @@ HEMISPHERES = "hemispheres.ome.zarr"
 PRECOMPUTED = "annotations.precomputed"
 TERMINOLOGY = "terminology.csv"
 MANIFEST = "manifest.json"
+
+# Assumed cross-section panel size in pixels, used to fit the atlas in the 2D views.
+PANEL_PIXELS = 600
+
+# BrainGlobe orientation letters name where an axis starts, so increasing indexes
+# travel towards the opposite pole.
+AXIS_DIRECTIONS = {
+    "a": "posterior",
+    "p": "anterior",
+    "s": "inferior",
+    "i": "superior",
+    "r": "left",
+    "l": "right",
+}
+OPPOSITE = {
+    "posterior": "anterior",
+    "anterior": "posterior",
+    "inferior": "superior",
+    "superior": "inferior",
+    "left": "right",
+    "right": "left",
+}
 
 
 def read_json(path: Path) -> dict:
@@ -42,6 +65,16 @@ def http_text(url: str) -> str:
         return response.read().decode()
 
 
+def component_relative(component: dict, filename: str = "") -> str:
+    directory = component["location"].strip("/")
+    return f"{directory}/{filename}".rstrip("/")
+
+
+def reference_name(reference: dict) -> str:
+    """Layer name for an additional reference, without the redundant suffix."""
+    return reference["name"].removesuffix("-template")
+
+
 @dataclass(frozen=True)
 class Atlas:
     manifest: dict
@@ -49,8 +82,11 @@ class Atlas:
     manifest_file: Path | None = None
 
     def relative(self, component: str, filename: str = "") -> str:
-        directory = self.manifest[component]["location"].strip("/")
-        return f"{directory}/{filename}".rstrip("/")
+        return component_relative(self.manifest[component], filename)
+
+    @property
+    def references(self) -> list[dict]:
+        return self.manifest.get("additional_references") or []
 
     def path(self, component: str, filename: str = "") -> Path:
         if self.store is None:
@@ -109,12 +145,21 @@ def multiscale(metadata: dict) -> dict:
     return metadata["attributes"]["ome"]["multiscales"][0]
 
 
-def atlas_scale(zarr_path: Path, resolution_um: float) -> str:
+def find_scale(zarr_path: Path, resolution_um: float) -> str | None:
+    if not (zarr_path / "zarr.json").is_file():
+        return None
     for dataset in multiscale(read_json(zarr_path / "zarr.json"))["datasets"]:
         scale_um = dataset["coordinateTransformations"][0]["scale"][0] * 1000
         if abs(scale_um - resolution_um) < 1e-6:
             return dataset["path"]
-    raise SystemExit(f"No {resolution_um:g} µm scale in {zarr_path}")
+    return None
+
+
+def atlas_scale(zarr_path: Path, resolution_um: float) -> str:
+    scale = find_scale(zarr_path, resolution_um)
+    if scale is None:
+        raise SystemExit(f"No {resolution_um:g} µm scale in {zarr_path}")
+    return scale
 
 
 def has_chunks(scale_path: Path) -> bool:
@@ -218,18 +263,76 @@ def remote_template_range(template_url: str) -> tuple[float, float]:
     return tuple(sampled_zarr_range(metadata, read_chunk, workers=16))
 
 
-def local_template_range(atlas: Atlas) -> tuple[float, float] | None:
+def local_zarr_range(atlas: Atlas, relative: str) -> tuple[float, float] | None:
+    """Range from the coarsest locally available scale of an image, if any."""
     if atlas.store is None:
         return None
-    template = atlas.path("template", TEMPLATE)
-    metadata_file = template / "zarr.json"
+    image = atlas.store / relative
+    metadata_file = image / "zarr.json"
     if not metadata_file.is_file():
         return None
     for dataset in reversed(multiscale(read_json(metadata_file))["datasets"]):
-        scale_path = template / dataset["path"]
+        scale_path = image / dataset["path"]
         if has_chunks(scale_path):
             return local_scale_range(str(scale_path))
     return None
+
+
+def local_template_range(atlas: Atlas) -> tuple[float, float] | None:
+    return local_zarr_range(atlas, atlas.relative("template", TEMPLATE))
+
+
+def anatomical_directions(orientation: str) -> dict[str, list[float]] | None:
+    """Map anatomical directions to unit vectors in Neuroglancer xyz."""
+    if len(orientation) != 3 or not set(orientation) <= set(AXIS_DIRECTIONS):
+        return None
+    vectors: dict[str, list[float]] = {}
+    # Neuroglancer xyz is the reverse of the BrainGlobe axis order.
+    for index, letter in enumerate(reversed(orientation.lower())):
+        axis = [0.0, 0.0, 0.0]
+        axis[index] = 1.0
+        towards = AXIS_DIRECTIONS[letter]
+        vectors[towards] = axis
+        vectors[OPPOSITE[towards]] = [-value for value in axis]
+    return vectors if len(vectors) == 6 else None
+
+
+def matrix_quaternion(right, down, forward) -> list[float]:
+    """Quaternion (x, y, z, w) for the rotation whose columns are the screen axes."""
+    m = list(zip(right, down, forward))
+    trace = m[0][0] + m[1][1] + m[2][2]
+    if trace > 0:
+        scale = (trace + 1.0) ** 0.5 * 2
+        q = [
+            (m[2][1] - m[1][2]) / scale,
+            (m[0][2] - m[2][0]) / scale,
+            (m[1][0] - m[0][1]) / scale,
+            scale / 4,
+        ]
+    else:
+        i = max(range(3), key=lambda axis: m[axis][axis])
+        j, k = (i + 1) % 3, (i + 2) % 3
+        scale = (1.0 + m[i][i] - m[j][j] - m[k][k]) ** 0.5 * 2
+        q = [0.0, 0.0, 0.0, (m[k][j] - m[j][k]) / scale]
+        q[i] = scale / 4
+        q[j] = (m[j][i] + m[i][j]) / scale
+        q[k] = (m[k][i] + m[i][k]) / scale
+    return q
+
+
+def top_down_orientation(orientation: str) -> list[float] | None:
+    """Look down the dorsoventral axis with anterior up and the right hemisphere right."""
+    directions = anatomical_directions(orientation)
+    if directions is None:
+        return None
+    forward = directions["inferior"]  # into the screen
+    down = directions["posterior"]
+    right = [
+        down[1] * forward[2] - down[2] * forward[1],
+        down[2] * forward[0] - down[0] * forward[2],
+        down[0] * forward[1] - down[1] * forward[0],
+    ]
+    return matrix_quaternion(right, down, forward)
 
 
 def build_state(
@@ -237,8 +340,11 @@ def build_state(
     structures: list[dict[str, str]],
     sources: dict[str, str],
     image_range: tuple[float, float],
+    references: Sequence[tuple[str, str, tuple[float, float]]] = (),
 ) -> dict:
-    ids = [str(int(row["annotation_value"])) for row in structures]
+    # "!" lists a segment without showing it, so the link opens without fetching a
+    # mesh for every region. Ticking a region in the segments tab loads it.
+    ids = [f"!{int(row['annotation_value'])}" for row in structures]
     colors = {
         str(int(row["annotation_value"])): row["color_hex_triplet"]
         for row in structures
@@ -256,26 +362,44 @@ def build_state(
 
     shape = list(reversed(manifest["shape"]))
     resolution = list(reversed(manifest["resolution"]))
+    projection_orientation = top_down_orientation(manifest.get("orientation", ""))
     return {
         "dimensions": {
             axis: [value * 1e-6, "m"] for axis, value in zip("xyz", resolution)
         },
         "position": [value / 2 for value in shape],
-        "crossSectionScale": 1,
+        "crossSectionScale": max(shape) / PANEL_PIXELS,
+        **(
+            {"projectionOrientation": projection_orientation}
+            if projection_orientation
+            else {}
+        ),
         "projectionScale": max(shape) * 1.25,
         "layers": [
             {
                 "type": "image",
                 "source": sources["template"],
                 "shaderControls": {"normalized": {"range": list(image_range)}},
+                "volumeRendering": "off",
                 "name": "template",
             },
+            *(
+                {
+                    "type": "image",
+                    "source": source,
+                    "shaderControls": {"normalized": {"range": list(range_)}},
+                    "visible": False,
+                    "name": name,
+                }
+                for name, source, range_ in references
+            ),
             {
                 "type": "segmentation",
                 "source": annotation_source,
                 "segments": ids,
                 "segmentColors": colors,
                 "objectAlpha": 0.55,
+                "tab": "segments",
                 "name": "annotation",
             },
             {
@@ -314,7 +438,20 @@ def generate_s3_state(
         image_range = local_template_range(atlas) or remote_template_range(
             http_url(template)
         )
-    return build_state(atlas.manifest, load_structures(atlas), sources, image_range)
+    references = []
+    for reference in atlas.references:
+        relative = component_relative(reference, TEMPLATE)
+        references.append(
+            (
+                reference_name(reference),
+                f"{http_url(relative)}/|zarr3:",
+                local_zarr_range(atlas, relative)
+                or remote_template_range(http_url(relative)),
+            )
+        )
+    return build_state(
+        atlas.manifest, load_structures(atlas), sources, image_range, references
+    )
 
 
 def generate_s3_json(
@@ -438,18 +575,49 @@ def ensure_local_data(atlas: Atlas) -> str:
         atlas.path("annotation_set", f"{PRECOMPUTED}/info"),
         "precomputed metadata",
     )
+    for reference in atlas.references:
+        name = reference_name(reference)
+        image = component_relative(reference, TEMPLATE)
+        metadata = f"{image}/zarr.json"
+        if not fs.exists(f"{S3_ROOT}/{metadata}"):
+            print(f"Skipping {name}: not on BrainGlobe S3")
+            continue
+        sync_file(
+            fs, f"{S3_ROOT}/{metadata}", atlas.store / metadata, f"{name} metadata"
+        )
+        reference_scale = find_scale(
+            atlas.store / image, float(atlas.manifest["resolution"][0])
+        )
+        if reference_scale is None:
+            print(f"Skipping {name}: no matching scale")
+            continue
+        trees.append((f"{image}/{reference_scale}", f"{name} chunks"))
+
     for relative, label in trees:
         sync_tree(fs, f"{S3_ROOT}/{relative}", atlas.store / relative, label)
     return scale
 
 
+def local_references(atlas: Atlas) -> list[tuple[str, Path, str]]:
+    """Additional references whose chunks are available in the local store."""
+    assert atlas.store is not None
+    resolution = float(atlas.manifest["resolution"][0])
+    found = []
+    for reference in atlas.references:
+        path = atlas.store / component_relative(reference, TEMPLATE)
+        scale = find_scale(path, resolution)
+        if scale and has_chunks(path / scale):
+            found.append((reference_name(reference), path, scale))
+    return found
+
+
 def make_local_state(
     atlas: Atlas, scale: str, origin: str
-) -> tuple[dict, dict[str, Path]]:
+) -> tuple[dict, dict[str, tuple[Path, str]]]:
     mounts = {
-        "template": atlas.path("template", TEMPLATE),
-        "annotation": atlas.path("annotation_set", ANNOTATION),
-        "hemisphere": atlas.path("annotation_set", HEMISPHERES),
+        "template": (atlas.path("template", TEMPLATE), scale),
+        "annotation": (atlas.path("annotation_set", ANNOTATION), scale),
+        "hemisphere": (atlas.path("annotation_set", HEMISPHERES), scale),
     }
     sources = {name: f"{origin}/ng/{name}/|zarr3:" for name in mounts}
     precomputed = atlas.path("annotation_set", PRECOMPUTED)
@@ -457,9 +625,23 @@ def make_local_state(
         sources["precomputed"] = (
             f"precomputed://{origin}/{precomputed.relative_to(atlas.store).as_posix()}"
         )
-    image_range = local_scale_range(str(mounts["template"] / scale))
+
+    references = []
+    for name, path, reference_scale in local_references(atlas):
+        mounts[name] = (path, reference_scale)
+        references.append(
+            (
+                name,
+                f"{origin}/ng/{name}/|zarr3:",
+                local_scale_range(str(path / reference_scale)),
+            )
+        )
+
+    image_range = local_scale_range(str(mounts["template"][0] / scale))
     return (
-        build_state(atlas.manifest, load_structures(atlas), sources, image_range),
+        build_state(
+            atlas.manifest, load_structures(atlas), sources, image_range, references
+        ),
         mounts,
     )
 
@@ -467,8 +649,7 @@ def make_local_state(
 class AtlasHandler(SimpleHTTPRequestHandler):
     state: dict = {}
     store = Path()
-    mounts: dict[str, Path] = {}
-    scale = ""
+    mounts: dict[str, tuple[Path, str]] = {}
 
     def end_headers(self) -> None:
         self.send_header("Access-Control-Allow-Origin", "*")
@@ -482,7 +663,7 @@ class AtlasHandler(SimpleHTTPRequestHandler):
 
     def translate_path(self, path: str) -> str:
         request = path.partition("?")[0].partition("#")[0]
-        for name, source in self.mounts.items():
+        for name, (source, _) in self.mounts.items():
             prefix = f"/ng/{name}"
             if request == prefix or request.startswith(prefix + "/"):
                 suffix = request.removeprefix(prefix).lstrip("/")
@@ -529,13 +710,13 @@ class AtlasHandler(SimpleHTTPRequestHandler):
         if request == "/ng_state.json":
             self.send_json(self.state)
             return
-        for name, source in self.mounts.items():
+        for name, (source, scale) in self.mounts.items():
             if request != f"/ng/{name}/zarr.json":
                 continue
             metadata = read_json(source / "zarr.json")
             datasets = multiscale(metadata)["datasets"]
             multiscale(metadata)["datasets"] = [
-                dataset for dataset in datasets if dataset["path"] == self.scale
+                dataset for dataset in datasets if dataset["path"] == scale
             ]
             self.send_json(metadata)
             return
@@ -575,7 +756,6 @@ def main() -> None:
     host = "localhost" if host in {"127.0.0.1", "0.0.0.0", "::"} else host
     origin = f"http://{host}:{port}"
     AtlasHandler.store = atlas.store
-    AtlasHandler.scale = scale
     AtlasHandler.state, AtlasHandler.mounts = make_local_state(atlas, scale, origin)
     if args.config:
         args.config.write_text(json.dumps(AtlasHandler.state, indent=2) + "\n")
