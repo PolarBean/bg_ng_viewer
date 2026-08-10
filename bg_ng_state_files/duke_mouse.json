@@ -29,7 +29,7 @@
   "layers": [
     {
       "type": "image",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/templates/duke_mouse-template/3_0/template.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/duke_mouse-template/3_0/template.ome.zarr/|zarr3:",
       "shaderControls": {
         "normalized": {
           "range": [
@@ -43,7 +43,7 @@
     },
     {
       "type": "image",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/templates/duke_mouse-md-template/3_0/template.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/duke_mouse-md-template/3_0/template.ome.zarr/|zarr3:",
       "shaderControls": {
         "normalized": {
           "range": [
@@ -57,7 +57,7 @@
     },
     {
       "type": "image",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/templates/duke_mouse-ad-template/3_0/template.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/duke_mouse-ad-template/3_0/template.ome.zarr/|zarr3:",
       "shaderControls": {
         "normalized": {
           "range": [
@@ -71,7 +71,7 @@
     },
     {
       "type": "image",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/templates/duke_mouse-dwi-template/3_0/template.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/duke_mouse-dwi-template/3_0/template.ome.zarr/|zarr3:",
       "shaderControls": {
         "normalized": {
           "range": [
@@ -85,7 +85,7 @@
     },
     {
       "type": "image",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/templates/duke_mouse-nqa-template/3_0/template.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/duke_mouse-nqa-template/3_0/template.ome.zarr/|zarr3:",
       "shaderControls": {
         "normalized": {
           "range": [
@@ -99,7 +99,7 @@
     },
     {
       "type": "image",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/templates/duke_mouse-rd-template/3_0/template.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/duke_mouse-rd-template/3_0/template.ome.zarr/|zarr3:",
       "shaderControls": {
         "normalized": {
           "range": [
@@ -113,7 +113,7 @@
     },
     {
       "type": "image",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/templates/duke_mouse-fa-template/3_0/template.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/duke_mouse-fa-template/3_0/template.ome.zarr/|zarr3:",
       "shaderControls": {
         "normalized": {
           "range": [
@@ -127,7 +127,7 @@
     },
     {
       "type": "image",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/templates/duke_mouse-m0-template/3_0/template.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/duke_mouse-m0-template/3_0/template.ome.zarr/|zarr3:",
       "shaderControls": {
         "normalized": {
           "range": [
@@ -141,7 +141,7 @@
     },
     {
       "type": "image",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/templates/duke_mouse-m1-template/3_0/template.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/duke_mouse-m1-template/3_0/template.ome.zarr/|zarr3:",
       "shaderControls": {
         "normalized": {
           "range": [
@@ -155,7 +155,7 @@
     },
     {
       "type": "image",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/templates/duke_mouse-m2-template/3_0/template.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/duke_mouse-m2-template/3_0/template.ome.zarr/|zarr3:",
       "shaderControls": {
         "normalized": {
           "range": [
@@ -169,7 +169,7 @@
     },
     {
       "type": "image",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/templates/duke_mouse-m3-template/3_0/template.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/duke_mouse-m3-template/3_0/template.ome.zarr/|zarr3:",
       "shaderControls": {
         "normalized": {
           "range": [
@@ -183,7 +183,7 @@
     },
     {
       "type": "image",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/templates/duke_mouse-iso-template/3_0/template.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/duke_mouse-iso-template/3_0/template.ome.zarr/|zarr3:",
       "shaderControls": {
         "normalized": {
           "range": [
@@ -198,9 +198,9 @@
     {
       "type": "segmentation",
       "source": [
-        "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/duke_mouse-annotation/3_0/annotations_compressed.ome.zarr/|zarr3:",
+        "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/duke_mouse-annotation/3_0/annotations_compressed.ome.zarr/|zarr3:",
         {
-          "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/duke_mouse-annotation/3_0/annotations.precomputed",
+          "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/duke_mouse-annotation/3_0/annotations.precomputed",
           "enableDefaultSubsources": false,
           "subsources": {
             "properties": true
@@ -578,7 +578,7 @@
     {
       "type": "segmentation",
       "source": {
-        "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/duke_mouse-annotation/3_0/annotations.precomputed",
+        "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/duke_mouse-annotation/3_0/annotations.precomputed",
         "enableDefaultSubsources": false,
         "subsources": {
           "properties": true,
@@ -955,7 +955,7 @@
     },
     {
       "type": "segmentation",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/duke_mouse-annotation/3_0/hemispheres.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/duke_mouse-annotation/3_0/hemispheres.ome.zarr/|zarr3:",
       "segments": [
         "1",
         "2"

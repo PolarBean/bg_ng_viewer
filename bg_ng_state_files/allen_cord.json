@@ -29,7 +29,7 @@
   "layers": [
     {
       "type": "image",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/templates/allen_spinal_cord-adult-mouse-nissl-template/2021/template.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/allen_spinal_cord-adult-mouse-nissl-template/2021/template.ome.zarr/|zarr3:",
       "shaderControls": {
         "normalized": {
           "range": [
@@ -44,9 +44,9 @@
     {
       "type": "segmentation",
       "source": [
-        "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/allen_spinal_cord-adult-mouse-annotation/2021/annotations_compressed.ome.zarr/|zarr3:",
+        "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/allen_spinal_cord-adult-mouse-annotation/2021/annotations_compressed.ome.zarr/|zarr3:",
         {
-          "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/allen_spinal_cord-adult-mouse-annotation/2021/annotations.precomputed",
+          "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/allen_spinal_cord-adult-mouse-annotation/2021/annotations.precomputed",
           "enableDefaultSubsources": false,
           "subsources": {
             "properties": true
@@ -230,7 +230,7 @@
     {
       "type": "segmentation",
       "source": {
-        "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/allen_spinal_cord-adult-mouse-annotation/2021/annotations.precomputed",
+        "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/allen_spinal_cord-adult-mouse-annotation/2021/annotations.precomputed",
         "enableDefaultSubsources": false,
         "subsources": {
           "properties": true,
@@ -413,7 +413,7 @@
     },
     {
       "type": "segmentation",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2/annotation-sets/allen_spinal_cord-adult-mouse-annotation/2021/hemispheres.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/allen_spinal_cord-adult-mouse-annotation/2021/hemispheres.ome.zarr/|zarr3:",
       "segments": [
         "1",
         "2"

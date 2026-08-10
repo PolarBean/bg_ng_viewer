@@ -20,8 +20,8 @@ from urllib.error import HTTPError
 from urllib.request import urlopen
 
 STORE_NAME = "brainglobe-atlasapi"
-S3_ROOT = "brainglobe/atlas-rc2"
-HTTP_ROOT = "https://brainglobe.s3.us-west-2.amazonaws.com/atlas-rc2"
+S3_ROOT = "brainglobe/atlas"
+HTTP_ROOT = "https://brainglobe.s3.us-west-2.amazonaws.com/atlas"
 TEMPLATE = "template.ome.zarr"
 ANNOTATION = "annotations_compressed.ome.zarr"
 HEMISPHERES = "hemispheres.ome.zarr"
