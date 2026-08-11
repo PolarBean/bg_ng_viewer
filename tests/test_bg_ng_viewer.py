@@ -73,6 +73,25 @@ def test_atlas_builds_component_paths_from_manifest():
     assert viewer.local_template_range(atlas) is None
 
 
+def test_ensure_local_data_does_not_contact_s3_for_complete_api_install(
+    monkeypatch,
+):
+    atlas = object()
+    monkeypatch.setattr(viewer, "validate_local_atlas", lambda candidate: "s0")
+
+    # Local serving must never construct a remote filesystem.
+    real_import = __import__
+
+    def guarded_import(name, *args, **kwargs):
+        if name == "s3fs":
+            raise AssertionError("complete local atlases must not contact S3")
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr("builtins.__import__", guarded_import)
+
+    assert viewer.ensure_local_data(atlas) == "s0"
+
+
 def test_build_state_preserves_layers_colours_and_meshes():
     sources = {
         "template": "template/|zarr3:",
@@ -163,6 +182,10 @@ def test_generate_s3_json_samples_each_additional_reference(
     (terminology_dir / viewer.TERMINOLOGY).write_text(
         "annotation_value,color_hex_triplet\n1,#112233\n"
     )
+    local_atlas = viewer.Atlas(
+        with_references, store, atlas_dir / viewer.MANIFEST
+    )
+    monkeypatch.setattr(viewer, "load_local_atlas", lambda *_: local_atlas)
     sampled = []
 
     def fake_range(url):
@@ -218,6 +241,8 @@ def test_generate_s3_json_uses_local_metadata(tmp_path: Path, monkeypatch):
     (terminology_dir / viewer.TERMINOLOGY).write_text(
         "annotation_value,color_hex_triplet\n" "1,#112233\n" "2,#abcdef\n" "3,#fedcba\n"
     )
+    local_atlas = viewer.Atlas(manifest(), store, atlas_dir / viewer.MANIFEST)
+    monkeypatch.setattr(viewer, "load_local_atlas", lambda *_: local_atlas)
     monkeypatch.setattr(viewer, "remote_template_range", lambda _: (4.0, 96.0))
 
     output = viewer.generate_s3_json("example_25um", tmp_path / "state.json", tmp_path)

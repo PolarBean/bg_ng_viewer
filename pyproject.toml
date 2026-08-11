@@ -3,7 +3,7 @@ name = "bg-ng-local-viewer"
 version = "0.2.0"
 description = "Generate and serve BrainGlobe atlas states for Neuroglancer"
 requires-python = ">=3.10"
-dependencies = ["numpy", "s3fs", "zstandard"]
+dependencies = ["brainglobe-atlasapi", "numpy", "zstandard"]
 
 [project.scripts]
 bg-ng-viewer = "bg_ng_viewer:main"

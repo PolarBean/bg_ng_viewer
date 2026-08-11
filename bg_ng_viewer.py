@@ -15,12 +15,11 @@ from dataclasses import dataclass
 from functools import cache, partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Sequence
+from typing import Any, Sequence
 from urllib.error import HTTPError
 from urllib.request import urlopen
 
 STORE_NAME = "brainglobe-atlasapi"
-S3_ROOT = "brainglobe/atlas"
 HTTP_ROOT = "https://brainglobe.s3.us-west-2.amazonaws.com/atlas"
 TEMPLATE = "template.ome.zarr"
 ANNOTATION = "annotations_compressed.ome.zarr"
@@ -84,6 +83,7 @@ class Atlas:
     manifest: dict
     store: Path | None = None
     manifest_file: Path | None = None
+    api: Any | None = None
 
     def relative(self, component: str, filename: str = "") -> str:
         return component_relative(self.manifest[component], filename)
@@ -104,18 +104,19 @@ def atlas_store(root: str | Path) -> Path:
 
 
 def load_local_atlas(root: str | Path, name: str) -> Atlas | None:
+    from brainglobe_atlasapi import BrainGlobeAtlas
+
     store = atlas_store(root)
-    manifests = list((store / "atlases" / name).glob(f"*/{MANIFEST}"))
-    if not manifests:
-        return None
-
-    def version(path: Path) -> tuple[int, ...]:
-        return tuple(
-            int(part) for part in path.parent.name.replace(".", "_").split("_")
+    try:
+        api = BrainGlobeAtlas(
+            name,
+            brainglobe_dir=store.parent,
+            check_latest=False,
         )
-
-    manifest_file = max(manifests, key=version)
-    return Atlas(read_json(manifest_file), store, manifest_file)
+    except ValueError:
+        return None
+    manifest_file = api.root_dir / api.metadata["location"].lstrip("/") / MANIFEST
+    return Atlas(api.metadata, api.root_dir, manifest_file, api)
 
 
 @cache
@@ -135,6 +136,21 @@ def load_remote_atlas(name: str) -> Atlas:
 
 
 def load_structures(atlas: Atlas) -> list[dict[str, str]]:
+    if atlas.api is not None:
+        rows = []
+        for structure in atlas.api.structures_list:
+            red, green, blue = structure["rgb_triplet"]
+            rows.append(
+                {
+                    **structure,
+                    "annotation_value": str(structure["annotation_value"]),
+                    "color_hex_triplet": f"#{red:02x}{green:02x}{blue:02x}",
+                    "root_identifier_path": json.dumps(
+                        structure["structure_id_path"]
+                    ),
+                }
+            )
+        return rows
     relative = atlas.relative("terminology", TERMINOLOGY)
     local = atlas.store / relative if atlas.store else None
     text = (
@@ -530,39 +546,6 @@ def generate_s3_json(
     return output
 
 
-def sync_file(fs, remote: str, local: Path, label: str) -> None:
-    size = fs.info(remote)["size"]
-    if local.is_file() and local.stat().st_size == size:
-        return
-    print(f"Downloading {label}...")
-    local.parent.mkdir(parents=True, exist_ok=True)
-    fs.get(remote, local)
-
-
-def sync_tree(fs, remote: str, local: Path, label: str) -> None:
-    files = [
-        (path, local / Path(path).relative_to(remote), info["size"])
-        for path, info in fs.find(remote, detail=True).items()
-        if info.get("type") != "directory"
-    ]
-    missing = [
-        (remote_file, local_file)
-        for remote_file, local_file, size in files
-        if not local_file.is_file() or local_file.stat().st_size != size
-    ]
-    if not missing:
-        return
-    print(f"Downloading {len(missing)} {label} files...")
-
-    def download(item) -> None:
-        remote_file, local_file = item
-        local_file.parent.mkdir(parents=True, exist_ok=True)
-        fs.get(remote_file, local_file)
-
-    with ThreadPoolExecutor(max_workers=16) as pool:
-        list(pool.map(download, missing))
-
-
 def validate_local_atlas(atlas: Atlas) -> str:
     required = [
         atlas.path("template", f"{TEMPLATE}/zarr.json"),
@@ -589,76 +572,8 @@ def validate_local_atlas(atlas: Atlas) -> str:
 
 
 def ensure_local_data(atlas: Atlas) -> str:
-    import s3fs
-
-    fs = s3fs.S3FileSystem(anon=True)
-    assert atlas.store is not None and atlas.manifest_file is not None
-    manifest_relative = atlas.manifest_file.relative_to(atlas.store).as_posix()
-    if not fs.exists(f"{S3_ROOT}/{manifest_relative}"):
-        return validate_local_atlas(atlas)
-
-    files = [
-        (atlas.relative("template", f"{TEMPLATE}/zarr.json"), "template metadata"),
-        (
-            atlas.relative("annotation_set", f"{ANNOTATION}/zarr.json"),
-            "annotation metadata",
-        ),
-        (
-            atlas.relative("annotation_set", f"{HEMISPHERES}/zarr.json"),
-            "hemisphere metadata",
-        ),
-        (atlas.relative("terminology", TERMINOLOGY), "terminology"),
-        (atlas.relative("coordinate_space", MANIFEST), "coordinate metadata"),
-    ]
-    for relative, label in files:
-        sync_file(fs, f"{S3_ROOT}/{relative}", atlas.store / relative, label)
-
-    scale = atlas_scale(
-        atlas.path("template", TEMPLATE), float(atlas.manifest["resolution"][0])
-    )
-    trees = [
-        (atlas.relative("template", f"{TEMPLATE}/{scale}"), "template chunks"),
-        (
-            atlas.relative("annotation_set", f"{ANNOTATION}/{scale}"),
-            "annotation chunks",
-        ),
-        (
-            atlas.relative("annotation_set", f"{HEMISPHERES}/{scale}"),
-            "hemisphere chunks",
-        ),
-        (atlas.relative("annotation_set", f"{PRECOMPUTED}/mesh"), "mesh"),
-        (
-            atlas.relative("annotation_set", f"{PRECOMPUTED}/segment_properties"),
-            "segment properties",
-        ),
-    ]
-    sync_file(
-        fs,
-        f"{S3_ROOT}/{atlas.relative('annotation_set', f'{PRECOMPUTED}/info')}",
-        atlas.path("annotation_set", f"{PRECOMPUTED}/info"),
-        "precomputed metadata",
-    )
-    for reference in atlas.references:
-        name = reference_name(reference)
-        image = component_relative(reference, TEMPLATE)
-        metadata = f"{image}/zarr.json"
-        if not fs.exists(f"{S3_ROOT}/{metadata}"):
-            print(f"Skipping {name}: not on BrainGlobe S3")
-            continue
-        sync_file(
-            fs, f"{S3_ROOT}/{metadata}", atlas.store / metadata, f"{name} metadata"
-        )
-        reference_scale = find_scale(
-            atlas.store / image, float(atlas.manifest["resolution"][0])
-        )
-        if reference_scale is None:
-            print(f"Skipping {name}: no matching scale")
-            continue
-        trees.append((f"{image}/{reference_scale}", f"{name} chunks"))
-
-    for relative, label in trees:
-        sync_tree(fs, f"{S3_ROOT}/{relative}", atlas.store / relative, label)
-    return scale
+    """Require data installed and managed by BrainGlobe Atlas API."""
+    return validate_local_atlas(atlas)
 
 
 def local_references(atlas: Atlas) -> list[tuple[str, Path, str]]:
