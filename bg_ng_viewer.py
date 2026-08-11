@@ -17,6 +17,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any, Sequence
 from urllib.error import HTTPError
+from urllib.parse import unquote
 from urllib.request import urlopen
 
 STORE_NAME = "brainglobe-atlasapi"
@@ -640,7 +641,7 @@ class AtlasHandler(SimpleHTTPRequestHandler):
         self.end_headers()
 
     def translate_path(self, path: str) -> str:
-        request = path.partition("?")[0].partition("#")[0]
+        request = unquote(path.partition("?")[0].partition("#")[0])
         for name, (source, _) in self.mounts.items():
             prefix = f"/ng/{name}"
             if request == prefix or request.startswith(prefix + "/"):
@@ -685,6 +686,7 @@ class AtlasHandler(SimpleHTTPRequestHandler):
         request = self.path.partition("?")[0]
         if self.send_range(request):
             return
+        request = unquote(request)
         if request == "/ng_state.json":
             self.send_json(self.state)
             return

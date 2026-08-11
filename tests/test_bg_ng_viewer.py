@@ -255,3 +255,18 @@ def test_generate_s3_json_uses_local_metadata(tmp_path: Path, monkeypatch):
         96.0,
     ]
     assert state["layers"][1]["segmentColors"]["2"] == "#abcdef"
+
+
+def test_translate_path_matches_url_encoded_mount_name(tmp_path: Path):
+    store = tmp_path / viewer.STORE_NAME
+    source = store / "templates/ccfv2_mouse/1_0/template.ome.zarr"
+    handler = object.__new__(viewer.AtlasHandler)
+    handler.store = store
+    handler.directory = str(store)
+    handler.mounts = {"ccfv2_mouse-Averaged reference": (source, "s0")}
+
+    translated = handler.translate_path(
+        "/ng/ccfv2_mouse-Averaged%20reference/zarr.json"
+    )
+
+    assert translated == str(source / "zarr.json")
