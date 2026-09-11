@@ -1,15 +1,15 @@
 {
   "dimensions": {
     "x": [
-      4.9999999999999996e-05,
+      1.9999999999999998e-05,
       "m"
     ],
     "y": [
-      4.9999999999999996e-05,
+      1.9999999999999998e-05,
       "m"
     ],
     "z": [
-      4.9999999999999996e-05,
+      1.9999999999999998e-05,
       "m"
     ]
   },
@@ -29,7 +29,7 @@
   "layers": [
     {
       "type": "image",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/hoops_tawny_dragon-template/3_1/template.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/hoops_tawny_dragon-template/3_2/template.ome.zarr/|zarr3:",
       "shaderControls": {
         "normalized": {
           "range": [
@@ -44,9 +44,9 @@
     {
       "type": "segmentation",
       "source": [
-        "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/hoops_tawny_dragon-annotation/3_1/annotations_compressed.ome.zarr/|zarr3:",
+        "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/hoops_tawny_dragon-annotation/3_2/annotations_compressed.ome.zarr/|zarr3:",
         {
-          "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/hoops_tawny_dragon-annotation/3_1/annotations.precomputed",
+          "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/hoops_tawny_dragon-annotation/3_2/annotations.precomputed",
           "enableDefaultSubsources": false,
           "subsources": {
             "properties": true
@@ -514,7 +514,7 @@
     {
       "type": "segmentation",
       "source": {
-        "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/hoops_tawny_dragon-annotation/3_1/annotations.precomputed",
+        "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/hoops_tawny_dragon-annotation/3_2/annotations.precomputed",
         "enableDefaultSubsources": false,
         "subsources": {
           "properties": true,
@@ -981,7 +981,7 @@
     },
     {
       "type": "segmentation",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/hoops_tawny_dragon-annotation/3_1/hemispheres.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/hoops_tawny_dragon-annotation/3_2/hemispheres.ome.zarr/|zarr3:",
       "segments": [
         "1",
         "2"
