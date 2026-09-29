@@ -29,7 +29,7 @@
   "layers": [
     {
       "type": "image",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/allen_mouse-template/3_3/template.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/allen_mouse-template/3_1/template.ome.zarr/|zarr3:",
       "shaderControls": {
         "normalized": {
           "range": [
@@ -44,9 +44,9 @@
     {
       "type": "segmentation",
       "source": [
-        "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/allen_mouse-annotation/3_3/annotations_compressed.ome.zarr/|zarr3:",
+        "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/allen_mouse-annotation/3_1/annotations_compressed.ome.zarr/|zarr3:",
         {
-          "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/allen_mouse-annotation/3_3/annotations.precomputed",
+          "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/allen_mouse-annotation/3_1/annotations.precomputed",
           "enableDefaultSubsources": false,
           "subsources": {
             "properties": true
@@ -310,6 +310,7 @@
         "879",
         "442",
         "434",
+        "545",
         "610",
         "274",
         "330",
@@ -1167,6 +1168,7 @@
         "879": "#1aa698",
         "442": "#1aa698",
         "434": "#1aa698",
+        "545": "#1aa698",
         "610": "#1aa698",
         "274": "#1aa698",
         "330": "#1aa698",
@@ -1774,7 +1776,7 @@
     {
       "type": "segmentation",
       "source": {
-        "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/allen_mouse-annotation/3_3/annotations.precomputed",
+        "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/allen_mouse-annotation/3_1/annotations.precomputed",
         "enableDefaultSubsources": false,
         "subsources": {
           "properties": true,
@@ -2038,6 +2040,7 @@
         "!879",
         "!442",
         "!434",
+        "!545",
         "!610",
         "!274",
         "!330",
@@ -2895,6 +2898,7 @@
         "879": "#1aa698",
         "442": "#1aa698",
         "434": "#1aa698",
+        "545": "#1aa698",
         "610": "#1aa698",
         "274": "#1aa698",
         "330": "#1aa698",
@@ -3501,7 +3505,7 @@
     },
     {
       "type": "segmentation",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/allen_mouse-annotation/3_3/hemispheres.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/allen_mouse-annotation/3_1/hemispheres.ome.zarr/|zarr3:",
       "segments": [
         "1",
         "2"

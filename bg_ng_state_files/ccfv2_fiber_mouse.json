@@ -34,7 +34,7 @@
         "normalized": {
           "range": [
             0.0,
-            231.0
+            239.0
           ]
         }
       },
@@ -43,12 +43,12 @@
     },
     {
       "type": "image",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/ccfv2_fiber_mouse-Averaged reference-template/3_1/template.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/ccfv2_fiber_mouse-Averaged%20reference-template/3_1/template.ome.zarr/|zarr3:",
       "shaderControls": {
         "normalized": {
           "range": [
             0.0,
-            657.0
+            2927.0
           ]
         }
       },

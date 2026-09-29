@@ -73,6 +73,13 @@ def test_atlas_builds_component_paths_from_manifest():
     assert viewer.local_template_range(atlas) is None
 
 
+def test_http_url_encodes_component_paths():
+    assert viewer.http_url("/templates/reference #1? 100% µm/3_1/template.ome.zarr") == (
+        f"{viewer.HTTP_ROOT}/templates/reference%20%231%3F%20100%25%20%C2%B5m"
+        "/3_1/template.ome.zarr"
+    )
+
+
 def test_ensure_local_data_does_not_contact_s3_for_complete_api_install(
     monkeypatch,
 ):
@@ -165,8 +172,18 @@ def test_build_state_adds_additional_references_as_hidden_layers():
     assert nissl["shaderControls"]["normalized"]["range"] == [1.0, 7.0]
 
 
+@pytest.mark.parametrize(
+    "reference_path, encoded_path",
+    [
+        ("nissl", "nissl"),
+        (
+            "ccfv2_dev_mouse-Averaged reference-template",
+            "ccfv2_dev_mouse-Averaged%20reference-template",
+        ),
+    ],
+)
 def test_generate_s3_json_samples_each_additional_reference(
-    tmp_path: Path, monkeypatch
+    tmp_path: Path, monkeypatch, reference_path, encoded_path
 ):
     store = tmp_path / viewer.STORE_NAME
     atlas_dir = store / "atlases/example_25um/3_0"
@@ -175,7 +192,10 @@ def test_generate_s3_json_samples_each_additional_reference(
     terminology_dir.mkdir(parents=True)
     with_references = manifest() | {
         "additional_references": [
-            {"name": "example-nissl-template", "location": "/templates/nissl/3_0"}
+            {
+                "name": "example-nissl-template",
+                "location": f"/templates/{reference_path}/3_0",
+            }
         ]
     }
     (atlas_dir / viewer.MANIFEST).write_text(json.dumps(with_references))
@@ -199,11 +219,11 @@ def test_generate_s3_json_samples_each_additional_reference(
 
     assert reference["name"] == "example-nissl"
     assert reference["source"] == (
-        f"{viewer.HTTP_ROOT}/templates/nissl/3_0/template.ome.zarr/|zarr3:"
+        f"{viewer.HTTP_ROOT}/templates/{encoded_path}/3_0/template.ome.zarr/|zarr3:"
     )
     assert sampled == [
         f"{viewer.HTTP_ROOT}/templates/example/1_0/template.ome.zarr",
-        f"{viewer.HTTP_ROOT}/templates/nissl/3_0/template.ome.zarr",
+        f"{viewer.HTTP_ROOT}/templates/{encoded_path}/3_0/template.ome.zarr",
     ]
 
 

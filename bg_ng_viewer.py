@@ -17,7 +17,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any, Sequence
 from urllib.error import HTTPError
-from urllib.parse import unquote
+from urllib.parse import quote, unquote
 from urllib.request import urlopen
 
 STORE_NAME = "brainglobe-atlasapi"
@@ -60,7 +60,7 @@ def read_json(path: Path) -> dict:
 
 
 def http_url(relative: str) -> str:
-    return f"{HTTP_ROOT}/{relative.lstrip('/')}"
+    return f"{HTTP_ROOT}/{quote(relative.lstrip('/'), safe='/')}"
 
 
 @cache
