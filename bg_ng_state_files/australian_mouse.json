@@ -29,12 +29,12 @@
   "layers": [
     {
       "type": "image",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/australian_mouse-template/3_0/template.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/australian_mouse-template/3_1/template.ome.zarr/|zarr3:",
       "shaderControls": {
         "normalized": {
           "range": [
             0.0,
-            63357.0
+            58124.0
           ]
         }
       },
@@ -44,9 +44,9 @@
     {
       "type": "segmentation",
       "source": [
-        "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/australian_mouse-annotation/3_0/annotations_compressed.ome.zarr/|zarr3:",
+        "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/australian_mouse-annotation/3_1/annotations_compressed.ome.zarr/|zarr3:",
         {
-          "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/australian_mouse-annotation/3_0/annotations.precomputed",
+          "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/australian_mouse-annotation/3_1/annotations.precomputed",
           "enableDefaultSubsources": false,
           "subsources": {
             "properties": true
@@ -450,21 +450,21 @@
         "151": "#e1d672",
         "152": "#a9a2da",
         "153": "#73837a",
-        "154": "#f82fb5",
-        "155": "#bb3dcf",
-        "156": "#b6225f",
-        "157": "#800861",
-        "158": "#9c1b9a",
-        "159": "#e93e39",
-        "160": "#a5f858",
-        "161": "#acd0a4",
-        "162": "#75db31",
-        "163": "#3110b3",
-        "164": "#e16f2e",
-        "165": "#ac3b0f",
-        "166": "#200c63",
-        "167": "#e0d2b8",
-        "168": "#efe26c",
+        "154": "#047a2d",
+        "155": "#592988",
+        "156": "#3e3322",
+        "157": "#f2a443",
+        "158": "#7cf0c0",
+        "159": "#a7fc55",
+        "160": "#0a3634",
+        "161": "#9df2b0",
+        "162": "#16a2ae",
+        "163": "#eafa42",
+        "164": "#404929",
+        "165": "#101d14",
+        "166": "#b9116c",
+        "167": "#06f928",
+        "168": "#437763",
         "169": "#b8d6d8",
         "170": "#bad271",
         "171": "#8273d7",
@@ -560,7 +560,7 @@
     {
       "type": "segmentation",
       "source": {
-        "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/australian_mouse-annotation/3_0/annotations.precomputed",
+        "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/australian_mouse-annotation/3_1/annotations.precomputed",
         "enableDefaultSubsources": false,
         "subsources": {
           "properties": true,
@@ -964,21 +964,21 @@
         "151": "#e1d672",
         "152": "#a9a2da",
         "153": "#73837a",
-        "154": "#f82fb5",
-        "155": "#bb3dcf",
-        "156": "#b6225f",
-        "157": "#800861",
-        "158": "#9c1b9a",
-        "159": "#e93e39",
-        "160": "#a5f858",
-        "161": "#acd0a4",
-        "162": "#75db31",
-        "163": "#3110b3",
-        "164": "#e16f2e",
-        "165": "#ac3b0f",
-        "166": "#200c63",
-        "167": "#e0d2b8",
-        "168": "#efe26c",
+        "154": "#047a2d",
+        "155": "#592988",
+        "156": "#3e3322",
+        "157": "#f2a443",
+        "158": "#7cf0c0",
+        "159": "#a7fc55",
+        "160": "#0a3634",
+        "161": "#9df2b0",
+        "162": "#16a2ae",
+        "163": "#eafa42",
+        "164": "#404929",
+        "165": "#101d14",
+        "166": "#b9116c",
+        "167": "#06f928",
+        "168": "#437763",
         "169": "#b8d6d8",
         "170": "#bad271",
         "171": "#8273d7",
@@ -1073,7 +1073,7 @@
     },
     {
       "type": "segmentation",
-      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/australian_mouse-annotation/3_0/hemispheres.ome.zarr/|zarr3:",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/australian_mouse-annotation/3_1/hemispheres.ome.zarr/|zarr3:",
       "segments": [
         "1",
         "2"
