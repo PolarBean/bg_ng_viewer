@@ -290,3 +290,22 @@ def test_translate_path_matches_url_encoded_mount_name(tmp_path: Path):
     )
 
     assert translated == str(source / "zarr.json")
+
+
+def test_generate_s3_state_ignores_local_atlas_of_other_version(
+    tmp_path: Path, monkeypatch
+):
+    local_atlas = viewer.Atlas({**manifest(), "version": "3.0"}, tmp_path)
+    remote_atlas = viewer.Atlas({**manifest(), "version": "3.1"})
+    monkeypatch.setattr(viewer, "load_local_atlas", lambda *_: local_atlas)
+    monkeypatch.setattr(viewer, "load_remote_atlas", lambda _: remote_atlas)
+    used = []
+    monkeypatch.setattr(
+        viewer, "build_state", lambda manifest, *_: used.append(manifest) or {}
+    )
+    monkeypatch.setattr(viewer, "load_structures", lambda atlas: [])
+    monkeypatch.setattr(viewer, "remote_template_range", lambda _: (0.0, 1.0))
+
+    viewer.generate_s3_state("example_25um", tmp_path, version="3.1")
+
+    assert used[0]["version"] == "3.1"

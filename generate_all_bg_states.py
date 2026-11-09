@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
-"""Generate one Neuroglancer state per BrainGlobe atlas family."""
+"""Generate one Neuroglancer state per BrainGlobe atlas family.
+
+Each state is written as ``<family>_v<version>.json`` and copied to
+``<family>.json``, which always holds the latest version so links to it are
+stable.
+"""
 
 import argparse
 import re
+import shutil
 from pathlib import Path
 
 from tqdm import tqdm
@@ -26,27 +32,34 @@ def highest_resolution_atlases(names: list[str]) -> list[str]:
     return sorted(name for _, name in selected.values())
 
 
+def state_paths(atlas: str, version: str, directory: Path = OUTPUT_DIR) -> tuple[Path, Path]:
+    """(versioned, latest) state files for an atlas."""
+    family = atlas.rsplit("_", 1)[0]
+    return directory / f"{family}_v{version}.json", directory / f"{family}.json"
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--missing-only",
         action="store_true",
-        help="skip state files that already exist",
+        help="only generate states for atlas versions without a versioned file",
     )
     args = parser.parse_args()
 
     OUTPUT_DIR.mkdir(exist_ok=True)
-    atlases = highest_resolution_atlases(list(remote_versions()))
+    versions = remote_versions()
     jobs = [
-        (atlas, OUTPUT_DIR / f"{atlas.rsplit('_', 1)[0]}.json") for atlas in atlases
+        (atlas, versions[atlas], *state_paths(atlas, versions[atlas]))
+        for atlas in highest_resolution_atlases(list(versions))
     ]
-    if args.missing_only:
-        jobs = [(atlas, output) for atlas, output in jobs if not output.exists()]
 
     progress = tqdm(jobs, unit="atlas")
-    for atlas, output in progress:
+    for atlas, version, versioned, latest in progress:
         progress.set_description(atlas)
-        generate_s3_json(atlas, output)
+        if not (args.missing_only and versioned.exists()):
+            generate_s3_json(atlas, versioned, version=version)
+        shutil.copyfile(versioned, latest)
 
 
 if __name__ == "__main__":

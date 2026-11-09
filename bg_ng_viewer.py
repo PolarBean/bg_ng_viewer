@@ -501,10 +501,12 @@ def generate_s3_state(
     atlas_name: str,
     brainglobe_dir: str | Path = Path.home() / ".brainglobe",
     image_range: tuple[float, float] | None = None,
+    version: str | None = None,
 ) -> dict:
-    atlas = load_local_atlas(brainglobe_dir, atlas_name) or load_remote_atlas(
-        atlas_name
-    )
+    """Build an S3 state; if ``version`` is given, ignore local copies of other versions."""
+    atlas = load_local_atlas(brainglobe_dir, atlas_name)
+    if atlas is None or (version and atlas.manifest.get("version") != version):
+        atlas = load_remote_atlas(atlas_name)
     template = atlas.relative("template", TEMPLATE)
     annotation = atlas.relative("annotation_set", ANNOTATION)
     annotation_dir = atlas.relative("annotation_set")
@@ -539,10 +541,11 @@ def generate_s3_json(
     output: str | Path,
     brainglobe_dir: str | Path = Path.home() / ".brainglobe",
     image_range: tuple[float, float] | None = None,
+    version: str | None = None,
 ) -> Path:
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
-    state = generate_s3_state(atlas_name, brainglobe_dir, image_range)
+    state = generate_s3_state(atlas_name, brainglobe_dir, image_range, version)
     output.write_text(json.dumps(state, indent=2) + "\n")
     return output
 
