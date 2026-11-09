@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Generate one Neuroglancer state per BrainGlobe atlas family.
+"""Generate Neuroglancer states for every published BrainGlobe atlas version.
 
-Each state is written as ``<family>_v<version>.json`` and copied to
-``<family>.json``, which always holds the latest version so links to it are
-stable.
+Each version is written as ``<family>_v<version>.json``; the latest version is
+also copied to ``<family>.json`` so links to it are stable.
 """
 
 import argparse
@@ -13,7 +12,7 @@ from pathlib import Path
 
 from tqdm import tqdm
 
-from bg_ng_viewer import generate_s3_json, remote_versions
+from bg_ng_viewer import generate_s3_json, published_versions, remote_versions
 
 OUTPUT_DIR = Path(__file__).parent / "bg_ng_state_files"
 RESOLUTION_SUFFIX = re.compile(r"^(.*)_(\d+(?:\.\d+)?)um$")
@@ -49,17 +48,21 @@ def main() -> None:
 
     OUTPUT_DIR.mkdir(exist_ok=True)
     versions = remote_versions()
+    atlases = highest_resolution_atlases(list(versions))
     jobs = [
-        (atlas, versions[atlas], *state_paths(atlas, versions[atlas]))
-        for atlas in highest_resolution_atlases(list(versions))
+        (atlas, version)
+        for atlas in tqdm(atlases, desc="listing versions", unit="atlas")
+        for version in published_versions(atlas)
     ]
 
-    progress = tqdm(jobs, unit="atlas")
-    for atlas, version, versioned, latest in progress:
-        progress.set_description(atlas)
+    progress = tqdm(jobs, unit="state")
+    for atlas, version in progress:
+        progress.set_description(f"{atlas} v{version}")
+        versioned, latest = state_paths(atlas, version)
         if not (args.missing_only and versioned.exists()):
             generate_s3_json(atlas, versioned, version=version)
-        shutil.copyfile(versioned, latest)
+        if version == versions[atlas]:
+            shutil.copyfile(versioned, latest)
 
 
 if __name__ == "__main__":

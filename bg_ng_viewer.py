@@ -127,12 +127,28 @@ def remote_versions() -> dict[str, str]:
     return dict(parser["atlases"])
 
 
-def load_remote_atlas(name: str) -> Atlas:
+S3_LIST_URL = "https://brainglobe.s3.us-west-2.amazonaws.com/"
+S3_PREFIX = re.compile(r"<Prefix>atlas/atlases/[^/<]+/(\d+(?:_\d+)*)/</Prefix>")
+
+
+def version_key(version: str) -> tuple[int, ...]:
+    return tuple(int(part) for part in version.split("."))
+
+
+def published_versions(name: str) -> list[str]:
+    """Every version of an atlas on BrainGlobe S3, oldest first."""
+    prefix = quote(f"atlas/atlases/{name}/", safe="")
+    listing = http_text(f"{S3_LIST_URL}?list-type=2&delimiter=/&prefix={prefix}")
+    versions = {match.replace("_", ".") for match in S3_PREFIX.findall(listing)}
+    return sorted(versions, key=version_key)
+
+
+def load_remote_atlas(name: str, version: str | None = None) -> Atlas:
     versions = remote_versions()
     if name not in versions:
         raise SystemExit(f"Atlas {name!r} is not on BrainGlobe S3")
-    version = versions[name].replace(".", "_")
-    url = http_url(f"atlases/{name}/{version}/{MANIFEST}")
+    folder = (version or versions[name]).replace(".", "_")
+    url = http_url(f"atlases/{name}/{folder}/{MANIFEST}")
     return Atlas(json.loads(http_text(url)))
 
 
@@ -506,7 +522,7 @@ def generate_s3_state(
     """Build an S3 state; if ``version`` is given, ignore local copies of other versions."""
     atlas = load_local_atlas(brainglobe_dir, atlas_name)
     if atlas is None or (version and atlas.manifest.get("version") != version):
-        atlas = load_remote_atlas(atlas_name)
+        atlas = load_remote_atlas(atlas_name, version)
     template = atlas.relative("template", TEMPLATE)
     annotation = atlas.relative("annotation_set", ANNOTATION)
     annotation_dir = atlas.relative("annotation_set")

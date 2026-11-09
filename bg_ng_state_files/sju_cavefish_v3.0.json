@@ -1,0 +1,225 @@
+{
+  "dimensions": {
+    "x": [
+      2e-06,
+      "m"
+    ],
+    "y": [
+      2e-06,
+      "m"
+    ],
+    "z": [
+      2e-06,
+      "m"
+    ]
+  },
+  "position": [
+    128.0,
+    105.5,
+    243.5
+  ],
+  "crossSectionScale": 0.8116666666666666,
+  "projectionOrientation": [
+    0.0,
+    0.7071067811865476,
+    0.7071067811865475,
+    0.0
+  ],
+  "projectionScale": 608.75,
+  "layers": [
+    {
+      "type": "image",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/sju_cavefish-template/3_0/template.ome.zarr/|zarr3:",
+      "shaderControls": {
+        "normalized": {
+          "range": [
+            0.0,
+            4078.0
+          ]
+        }
+      },
+      "volumeRendering": "off",
+      "name": "template"
+    },
+    {
+      "type": "image",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/sju_cavefish-cartpt-template/3_0/template.ome.zarr/|zarr3:",
+      "shaderControls": {
+        "normalized": {
+          "range": [
+            0.0,
+            630.0
+          ]
+        }
+      },
+      "visible": false,
+      "name": "sju_cavefish-cartpt"
+    },
+    {
+      "type": "segmentation",
+      "source": [
+        "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/sju_cavefish-annotation/3_0/annotations_compressed.ome.zarr/|zarr3:",
+        {
+          "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/sju_cavefish-annotation/3_0/annotations.precomputed",
+          "enableDefaultSubsources": false,
+          "subsources": {
+            "properties": true
+          }
+        }
+      ],
+      "segments": [
+        "999",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27"
+      ],
+      "segmentColors": {
+        "999": "#ffffff",
+        "1": "#800000",
+        "2": "#00bfff",
+        "3": "#00bfff",
+        "4": "#8a2be2",
+        "5": "#a0522d",
+        "6": "#f0ffff",
+        "7": "#db7093",
+        "8": "#00ffff",
+        "9": "#7cfc00",
+        "10": "#ff4500",
+        "11": "#0000ff",
+        "13": "#808000",
+        "14": "#008080",
+        "15": "#000080",
+        "16": "#800080",
+        "17": "#ffff00",
+        "18": "#00fa9a",
+        "19": "#ff69b4",
+        "20": "#d2691e",
+        "21": "#5f9ea0",
+        "22": "#98fb98",
+        "23": "#ff6347",
+        "24": "#000080",
+        "25": "#808080",
+        "26": "#fffacd",
+        "27": "#700060"
+      },
+      "objectAlpha": 0.55,
+      "tab": "segments",
+      "name": "annotation"
+    },
+    {
+      "type": "segmentation",
+      "source": {
+        "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/sju_cavefish-annotation/3_0/annotations.precomputed",
+        "enableDefaultSubsources": false,
+        "subsources": {
+          "properties": true,
+          "mesh": true
+        }
+      },
+      "segments": [
+        "999",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27"
+      ],
+      "segmentColors": {
+        "999": "#ffffff",
+        "1": "#800000",
+        "2": "#00bfff",
+        "3": "#00bfff",
+        "4": "#8a2be2",
+        "5": "#a0522d",
+        "6": "#f0ffff",
+        "7": "#db7093",
+        "8": "#00ffff",
+        "9": "#7cfc00",
+        "10": "#ff4500",
+        "11": "#0000ff",
+        "13": "#808000",
+        "14": "#008080",
+        "15": "#000080",
+        "16": "#800080",
+        "17": "#ffff00",
+        "18": "#00fa9a",
+        "19": "#ff69b4",
+        "20": "#d2691e",
+        "21": "#5f9ea0",
+        "22": "#98fb98",
+        "23": "#ff6347",
+        "24": "#000080",
+        "25": "#808080",
+        "26": "#fffacd",
+        "27": "#700060"
+      },
+      "objectAlpha": 0.55,
+      "tab": "segments",
+      "name": "region meshes"
+    },
+    {
+      "type": "segmentation",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/sju_cavefish-annotation/3_0/hemispheres.ome.zarr/|zarr3:",
+      "segments": [
+        "1",
+        "2"
+      ],
+      "segmentColors": {
+        "1": "#4c78a8",
+        "2": "#f58518"
+      },
+      "visible": false,
+      "name": "hemisphere mask"
+    }
+  ],
+  "showSlices": false,
+  "selectedLayer": {
+    "visible": true,
+    "layer": "annotation"
+  },
+  "layout": "4panel-alt"
+}

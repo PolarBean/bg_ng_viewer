@@ -298,7 +298,7 @@ def test_generate_s3_state_ignores_local_atlas_of_other_version(
     local_atlas = viewer.Atlas({**manifest(), "version": "3.0"}, tmp_path)
     remote_atlas = viewer.Atlas({**manifest(), "version": "3.1"})
     monkeypatch.setattr(viewer, "load_local_atlas", lambda *_: local_atlas)
-    monkeypatch.setattr(viewer, "load_remote_atlas", lambda _: remote_atlas)
+    monkeypatch.setattr(viewer, "load_remote_atlas", lambda *_: remote_atlas)
     used = []
     monkeypatch.setattr(
         viewer, "build_state", lambda manifest, *_: used.append(manifest) or {}

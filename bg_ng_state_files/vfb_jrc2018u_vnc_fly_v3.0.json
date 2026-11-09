@@ -1,0 +1,187 @@
+{
+  "dimensions": {
+    "x": [
+      4e-07,
+      "m"
+    ],
+    "y": [
+      4e-07,
+      "m"
+    ],
+    "z": [
+      4e-07,
+      "m"
+    ]
+  },
+  "position": [
+    330.0,
+    191.0,
+    645.0
+  ],
+  "crossSectionScale": 2.15,
+  "projectionOrientation": [
+    0.0,
+    0.7071067811865476,
+    0.7071067811865475,
+    0.0
+  ],
+  "projectionScale": 1612.5,
+  "layers": [
+    {
+      "type": "image",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/templates/vfb_jrc2018u_vnc_fly-template/3_0/template.ome.zarr/|zarr3:",
+      "shaderControls": {
+        "normalized": {
+          "range": [
+            0.0,
+            205.0
+          ]
+        }
+      },
+      "volumeRendering": "off",
+      "name": "template"
+    },
+    {
+      "type": "segmentation",
+      "source": [
+        "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/vfb_jrc2018u_vnc_fly-annotation/3_0/annotations_compressed.ome.zarr/|zarr3:",
+        {
+          "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/vfb_jrc2018u_vnc_fly-annotation/3_0/annotations.precomputed",
+          "enableDefaultSubsources": false,
+          "subsources": {
+            "properties": true
+          }
+        }
+      ],
+      "segments": [
+        "999",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+      ],
+      "segmentColors": {
+        "999": "#ffffff",
+        "1": "#5b5b5b",
+        "2": "#00ff00",
+        "3": "#ff00ff",
+        "4": "#0000ff",
+        "5": "#0084f6",
+        "7": "#a7613e",
+        "8": "#4f006a",
+        "9": "#00fff6",
+        "10": "#3e7b8d",
+        "11": "#eda7ff",
+        "12": "#d3ff95",
+        "13": "#b94fff",
+        "14": "#e51a58",
+        "15": "#848400",
+        "16": "#00ff95",
+        "17": "#61002c",
+        "18": "#f68412",
+        "19": "#caff00",
+        "20": "#2c3e00",
+        "21": "#0035c1"
+      },
+      "objectAlpha": 0.55,
+      "tab": "segments",
+      "name": "annotation"
+    },
+    {
+      "type": "segmentation",
+      "source": {
+        "url": "precomputed://https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/vfb_jrc2018u_vnc_fly-annotation/3_0/annotations.precomputed",
+        "enableDefaultSubsources": false,
+        "subsources": {
+          "properties": true,
+          "mesh": true
+        }
+      },
+      "segments": [
+        "999",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+      ],
+      "segmentColors": {
+        "999": "#ffffff",
+        "1": "#5b5b5b",
+        "2": "#00ff00",
+        "3": "#ff00ff",
+        "4": "#0000ff",
+        "5": "#0084f6",
+        "7": "#a7613e",
+        "8": "#4f006a",
+        "9": "#00fff6",
+        "10": "#3e7b8d",
+        "11": "#eda7ff",
+        "12": "#d3ff95",
+        "13": "#b94fff",
+        "14": "#e51a58",
+        "15": "#848400",
+        "16": "#00ff95",
+        "17": "#61002c",
+        "18": "#f68412",
+        "19": "#caff00",
+        "20": "#2c3e00",
+        "21": "#0035c1"
+      },
+      "objectAlpha": 0.55,
+      "tab": "segments",
+      "name": "region meshes"
+    },
+    {
+      "type": "segmentation",
+      "source": "https://brainglobe.s3.us-west-2.amazonaws.com/atlas/annotation-sets/vfb_jrc2018u_vnc_fly-annotation/3_0/hemispheres.ome.zarr/|zarr3:",
+      "segments": [
+        "1",
+        "2"
+      ],
+      "segmentColors": {
+        "1": "#4c78a8",
+        "2": "#f58518"
+      },
+      "visible": false,
+      "name": "hemisphere mask"
+    }
+  ],
+  "showSlices": false,
+  "selectedLayer": {
+    "visible": true,
+    "layer": "annotation"
+  },
+  "layout": "4panel-alt"
+}
